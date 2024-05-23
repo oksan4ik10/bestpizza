@@ -5,13 +5,15 @@ export interface IUser {
     token: string;
     name: string;
     phone: string;
+    email: string
 
 }
 
 const initialState: IUser = {
     token: "",
     name: "",
-    phone: ""
+    phone: "",
+    email: ""
 
 };
 

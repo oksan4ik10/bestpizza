@@ -2,10 +2,13 @@ import { useRef, useState } from "react";
 
 import { useForm } from "react-hook-form"
 
+
 import {
     createUserWithEmailAndPassword,
     getAuth,
 } from 'firebase/auth';
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 import InputEmail from "../InputEmail/InputEmail";
 import InputPassword from "../InputPassword/InputPassword";
@@ -18,7 +21,7 @@ interface IForm {
     password: string;
     password_repeat: string;
     phone: string;
-    checkbox: boolean;
+    nameUser: string;
 }
 
 interface IProps {
@@ -36,26 +39,27 @@ function FormSignUp(props: IProps) {
 
     const [errorAuth, setErrorAuth] = useState(false);
 
-    // !Qw1234567 kj@mail.ru
+    // !Qq345678 efimov2024@gmail.ru
+
+    const saveDataToFirestore = async (phone: string, nameUser: string, uid: string) => {
+        await setDoc(doc(db, "userInfo", uid), {
+            phone: phone,
+            name: nameUser,
+
+        });
+
+    };
 
     const onSubmit = async (data: IForm) => {
 
         try {
             const s = await createUserWithEmailAndPassword(auth, data.email, data.password);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const token = (s as any).user.accessToken;
-            console.log(token);
-
-
-            // dispatch(setToken(token))
-            // navigate(`/`)
-
-
+            const token = s.user.uid;
+            saveDataToFirestore(data.phone, data.nameUser, token)
+            closeLogin();
         } catch (e) {
-
             setErrorAuth(true);
             return
-
         }
 
 
@@ -77,6 +81,11 @@ function FormSignUp(props: IProps) {
         <div className="form">
             <h1 className="form__head">Регистрация</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
+                <label className={"form__label email " + ((errors.nameUser) ? "error" : "")}>
+                    <span>Имя</span>
+                    <input type="text" placeholder="Введите имя" {...register("nameUser", { validate: (value) => value.length > 3 && value.length <= 50 })} />
+                    {errors.nameUser && <p className='error-message'>Длина строки от 3 до 50 символов</p>}
+                </label>
                 <InputEmail register={regEmail} error={errors.email} errorAuth={errorAuth}></InputEmail>
                 <label className={"form__label email " + ((errors.phone) ? "error" : "")}>
                     <span>Телефон</span>

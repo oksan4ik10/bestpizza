@@ -8,7 +8,7 @@ import { ICardLocal } from './models/type'
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
 import './App.css'
-import "./firebase"
+
 
 import MainPage from './pages/MainPage/MainPage'
 import RestaurantPage from './pages/RestaurantPage/RestaurantPage'

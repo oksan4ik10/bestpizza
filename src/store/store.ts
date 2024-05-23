@@ -3,11 +3,13 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import userReducer from './reducers/userReducer';
 import countCardReducer from './reducers/countCardReducer';
+import cartReducer from './reducers/cartReducer';
 
 
 const rootReducer = combineReducers({
     userReducer,
-    countCardReducer
+    countCardReducer,
+    cartReducer
 });
 
 export const setupStore = () => {

@@ -7,6 +7,9 @@ import {
     Auth,
 } from 'firebase/auth';
 
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase";
+
 import InputEmail from "../../components/InputEmail/InputEmail";
 import InputPassword from "../../components/InputPassword/InputPassword";
 
@@ -18,7 +21,6 @@ import { setDataUser } from "../../store/reducers/userReducer";
 interface IForm {
     email: string;
     password: string;
-    checkbox: boolean;
 
 }
 
@@ -37,47 +39,45 @@ function FormLogin(props: IProps) {
     const [errorAuth, setErrorAuth] = useState(false);
     const dispatch = useAppDispatch();
 
-    // !Qw1234567 kj@mail.ru
+    // !Qq345678 efimov2024@gmail.ru
 
     const funcSubmit = async (auth: Auth, email: string, password?: string, check?: boolean) => {
 
         if (!password) return
-        const s = await signInWithEmailAndPassword(auth, email, password);
+        try {
+            const authUser = await signInWithEmailAndPassword(auth, email, password);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const token = (s as any).user.accessToken;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const phone = (s as any).user.phoneNumber;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const emailUser = (s as any).user.email;
-        console.log(s);
+            const token = authUser.user.uid;
+            const docRef = doc(db, "userInfo", token);
+            const infoUser = await getDoc(docRef);
+            if (!infoUser.exists()) {
+                throw new Error("Not data")
+            }
+            const name = infoUser.data().name;
+            const phone = infoUser.data().phone;
 
-        if (check) localStorage.setItem("tokenAuth", token)
+            if (check) localStorage.setItem("tokenAuth", token)
 
-        if (token) {
+            if (token) {
+                dispatch(setDataUser({
+                    name: name ? name : "",
+                    phone: phone ? phone : "",
+                    email: email,
+                    token: token
+                }))
+                closeAuth()
+            }
+        } catch (e) {
+            setErrorAuth(true);
 
-            dispatch(setDataUser({
-                name: emailUser,
-                phone: phone,
-                token: token
-            }))
-            closeAuth()
         }
-
-        // dispatch(setToken(token))
-        // navigate(`/`)
-
     }
 
     const onSubmit = async (data: IForm) => {
         const password = data.password ? data.password.trim() : "";
-        try {
-            funcSubmit(auth, data.email.trim(), password, data.checkbox)
-        } catch (e) {
-            setErrorAuth(true);
-            return
 
-        }
+        funcSubmit(auth, data.email.trim(), password)
+
 
 
     }

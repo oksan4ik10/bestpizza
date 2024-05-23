@@ -13,7 +13,7 @@ const initialState: ICountCard = {
 
 
 export const countSlice = createSlice({
-    name: 'user',
+    name: 'countCart',
     initialState,
     reducers: {
         setCount(state, action: PayloadAction<number>) {
