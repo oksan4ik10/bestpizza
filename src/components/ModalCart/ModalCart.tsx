@@ -32,7 +32,7 @@ function ModalCart(props: IProps) {
 
     useEffect((
 
-    ) => { dispatch(setDataCart(arrCart)) }, [arrCart])
+    ) => { dispatch(setDataCart({ cart: arrCart, totalPrice: price })) }, [arrCart])
 
     useEffect(() => {
         const localCard = localStorage.getItem("card")

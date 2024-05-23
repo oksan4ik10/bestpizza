@@ -26,6 +26,8 @@ function ModalOrder(props: IProps) {
     const { closeOrder, closeCart, closeFinishOrder, openFinishOrder } = props;
     const user = useAppSelector((store) => store.userReducer);
     const cart = useAppSelector((store) => store.cartReducer).cart;
+    const totalPrice = useAppSelector((store) => store.cartReducer).totalPrice;
+
     const dispatch = useAppDispatch()
     const { register, handleSubmit, formState: { errors } } = useForm<IForm>({
         shouldUseNativeValidation: false, defaultValues: {
@@ -43,7 +45,9 @@ function ModalOrder(props: IProps) {
             pay: data.payCheckbox,
             uid: user.token,
             status: "new",
-            order: cart
+            date: new Date(),
+            order: cart,
+            totalPrice: totalPrice
 
         }
         try {

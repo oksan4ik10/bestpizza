@@ -3,12 +3,14 @@ import { ICart } from '../../models/type';
 
 
 interface ICartReducer {
-    cart: ICart[]
+    cart: ICart[],
+    totalPrice: number
 
 }
 
 const initialState: ICartReducer = {
-    cart: []
+    cart: [],
+    totalPrice: 0
 
 };
 
@@ -17,8 +19,9 @@ export const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        setDataCart(state, action: PayloadAction<ICart[]>) {
-            state.cart = action.payload;
+        setDataCart(state, action: PayloadAction<ICartReducer>) {
+            state.cart = action.payload.cart;
+            state.totalPrice = action.payload.totalPrice;
         }
     },
 });
