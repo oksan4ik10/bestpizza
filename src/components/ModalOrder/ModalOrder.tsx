@@ -1,8 +1,11 @@
 
 import { useForm } from "react-hook-form"
 import ReactInputMask from "react-input-mask";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../firebase";
 
-import { useAppSelector } from "../../store/store"
+import { useAppSelector, useAppDispatch } from "../../store/store"
+import { setCount } from "../../store/reducers/countCardReducer";
 interface IProps {
     closeOrder: () => void
     closeCart: () => void;
@@ -22,6 +25,8 @@ interface IForm {
 function ModalOrder(props: IProps) {
     const { closeOrder, closeCart, closeFinishOrder, openFinishOrder } = props;
     const user = useAppSelector((store) => store.userReducer);
+    const cart = useAppSelector((store) => store.cartReducer).cart;
+    const dispatch = useAppDispatch()
     const { register, handleSubmit, formState: { errors } } = useForm<IForm>({
         shouldUseNativeValidation: false, defaultValues: {
             name: user.name ? user.name : "",
@@ -29,13 +34,30 @@ function ModalOrder(props: IProps) {
         }
     });
     const onSubmit = async (data: IForm) => {
-        console.log(data);
-        localStorage.removeItem("card")
-        closeModal();
-        openFinishOrder();
 
-        setTimeout(() => closeFinishOrder(), 3000)
+        const userInfo = {
+            name: data.name,
+            address: data.address,
+            comment: data.comment,
+            phone: data.phone,
+            pay: data.payCheckbox,
+            uid: user.token,
+            status: "new",
+            order: cart
 
+        }
+        try {
+            await addDoc(collection(db, "orders"), userInfo);
+            localStorage.removeItem("card")
+            closeModal();
+            openFinishOrder();
+            dispatch(setCount(0))
+
+            setTimeout(() => closeFinishOrder(), 3000)
+        } catch (e) {
+            console.error(e);
+
+        }
     }
     const closeModal = () => {
         closeCart()
@@ -76,12 +98,12 @@ function ModalOrder(props: IProps) {
                             <div className="form__info">
                                 <span>Способ оплаты</span>
                                 <label className="label__checkbox">
-                                    <input type="radio"  {...register("payCheckbox")} />
+                                    <input type="radio"  {...register("payCheckbox")} value="cash" />
                                     <span className="label__check"></span>
                                     <span className="label__text">Наличными</span>
                                 </label>
                                 <label className="label__checkbox">
-                                    <input type="radio"  {...register("payCheckbox")} />
+                                    <input type="radio"  {...register("payCheckbox")} value="card" />
                                     <span className="label__check"></span>
                                     <span className="label__text">Картой курьеру</span>
                                 </label>

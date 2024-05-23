@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 import { useAppDispatch, useAppSelector } from "../../store/store"
 import { setCount } from "../../store/reducers/countCardReducer"
+import { setDataCart } from "../../store/reducers/cartReducer"
 import { ICardLocal, ICart } from "../../models/type"
 
 interface IProps {
@@ -28,6 +29,11 @@ function ModalCart(props: IProps) {
 
     const [arrCart, setArrCart] = useState<ICart[]>([]);
     const [price, setPrice] = useState(0);
+
+    useEffect((
+
+    ) => { dispatch(setDataCart(arrCart)) }, [arrCart])
+
     useEffect(() => {
         const localCard = localStorage.getItem("card")
         const card: ICardLocal[] = localCard ? JSON.parse(localCard) : [];
@@ -70,8 +76,11 @@ function ModalCart(props: IProps) {
         if (count > 10) return
         dispatch(setCount(countStore + 1))
         setPrice(price + priceProduct)
-        arrCart[prodIndex].count = count;
-        setArrCart(arrCart)
+        const arrCartCopy = [...arrCart]
+        arrCartCopy[prodIndex] = Object.assign({}, arrCartCopy[prodIndex])
+
+        arrCartCopy[prodIndex].count = count;
+        setArrCart(arrCartCopy)
         setLocalStorage(id, count)
 
     }
@@ -82,13 +91,15 @@ function ModalCart(props: IProps) {
         if (count < 0) return
         dispatch(setCount(countStore - 1))
         setPrice(price - priceProduct)
+        const arrCartCopy = [...arrCart]
         if (count === 0) {
-            arrCart.splice(prodIndex, 1)
+            arrCartCopy.splice(prodIndex, 1)
         } else {
-            arrCart[prodIndex].count = count;
+            arrCartCopy[prodIndex] = Object.assign({}, arrCartCopy[prodIndex])
+            arrCartCopy[prodIndex].count = count;
         }
 
-        setArrCart(arrCart)
+        setArrCart(arrCartCopy)
         setLocalStorage(id, count)
 
     }

@@ -1,6 +1,3 @@
-import { app } from "../../firebase";
-
-import { collection, getFirestore, getDocs } from "firebase/firestore";
 
 
 import pizzaPlus from "../../assets/img/pizza-plus/preview.jpg"
@@ -17,25 +14,6 @@ interface IProps {
 }
 function MainPage(props: IProps) {
     const { changeRestaurant } = props;
-
-
-    const db = getFirestore(app);
-    const addtodb = async () => {
-        console.log(222);
-
-        const querySnapshot = await getDocs(collection(db, "myCollection"));
-        console.log(querySnapshot);
-
-        querySnapshot.forEach((doc) => {
-            if (doc.exists())            // doc.data() is never undefined for query doc snapshots
-                console.log(doc.data());
-            else console.log(222289);
-
-
-
-        });
-    }
-
     const clickRestaurant = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
         const target = e.target as HTMLElement;
@@ -48,7 +26,6 @@ function MainPage(props: IProps) {
 
     const imgArr = [pizzaPlus, tanuki, food, palki, gusi, pizza]
     return <>
-        <button onClick={addtodb}>Click</button>
 
         <main className="main">
             <div className="container">
