@@ -39,7 +39,8 @@ function ModalCart(props: IProps) {
         const card: ICardLocal[] = localCard ? JSON.parse(localCard) : [];
         let priceProduct = 0
         const items = card.map((item) => {
-            const product = dataArr[item.idRes].find((i) => i.id)
+            const product = dataArr[item.idRes].find((i) => i.id === item.id)
+
             if (product) priceProduct = priceProduct + product.price * item.count;
             return {
                 id: item.id,
