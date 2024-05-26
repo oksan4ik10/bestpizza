@@ -36,7 +36,6 @@ function ModalOrder(props: IProps) {
         }
     });
     const onSubmit = async (data: IForm) => {
-
         const userInfo = {
             name: data.name,
             address: data.address,
@@ -49,15 +48,15 @@ function ModalOrder(props: IProps) {
             order: cart,
             totalPrice: totalPrice
 
-        }
+        } //данные о заказе
         try {
-            await addDoc(collection(db, "orders"), userInfo);
-            localStorage.removeItem("card")
-            closeModal();
-            openFinishOrder();
-            dispatch(setCount(0))
+            await addDoc(collection(db, "orders"), userInfo); //Firebase добавить заказ в бд
+            localStorage.removeItem("card") //очистить localStorage 
+            closeModal(); //закрыть окно заказа
+            openFinishOrder(); //открыть окно об успешной отправке
+            dispatch(setCount(0)) //обновить кол-во блюд в корзине
 
-            setTimeout(() => closeFinishOrder(), 3000)
+            setTimeout(() => closeFinishOrder(), 3000) //через 3с закрыть окно об успешной отправке
         } catch (e) {
             console.error(e);
 

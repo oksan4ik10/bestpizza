@@ -135,7 +135,7 @@ function ModalCart(props: IProps) {
                     <span className="modal-pricetag">{price} ₽</span>
                     <div className="footer-buttons">
                         <button className="button button-primary" onClick={openOrder}>Оформить заказ</button>
-                        <button className="button clear-cart">Отмена</button>
+                        <button className="button clear-cart" onClick={closeCart}>Отмена</button>
                     </div>
                 </div>
 
